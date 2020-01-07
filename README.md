@@ -34,3 +34,6 @@ This will configure outlook to look at this folder.
 
 To Update at any time - run: git pull
 (Your configuration is in the journal files which are not changed by git)
+
+*FIXES*
+Latest version fixes issue with Filter not applying when drag drop action applied
