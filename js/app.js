@@ -104,11 +104,9 @@ tbApp.controller('taskboardController', function($scope, $filter, $http) {
 
 			stop: function(e, ui) {
 				try {
-					writeLog('drag and drop: 1');
 					// locate the target folder in outlook
 					// ui.item.sortable.droptarget[0].id represents the id of the target list
 					if (ui.item.sortable.droptarget) {
-						writeLog('drag and drop: 2');
 						// check if it is dropped on a valid target
 						if (
 							($scope.config.INPROGRESS_FOLDER.LIMIT !== 0 &&
@@ -134,7 +132,6 @@ tbApp.controller('taskboardController', function($scope, $filter, $http) {
 							$scope.initTasks();
 							ui.item.sortable.cancel();
 						} else {
-							writeLog('drag and drop: 3');
 							//TODO dit kan korter
 							switch (ui.item.sortable.droptarget[0].id) {
 								case 'folder-' + SOMEDAY:
@@ -186,13 +183,10 @@ tbApp.controller('taskboardController', function($scope, $filter, $http) {
 									var newstatus = $scope.config.STATUS.COMPLETED.VALUE;
 									break;
 							}
-							writeLog('drag and drop: 4');
 
 							// locate the task in outlook namespace by using unique entry id
 							var taskitem = getTaskItem(ui.item.sortable.model.entryID);
 							var itemChanged = false;
-
-							writeLog('drag and drop: 5');
 
 							// set new status, if different
 							if (taskitem.Status != newstatus) {
@@ -215,7 +209,6 @@ tbApp.controller('taskboardController', function($scope, $filter, $http) {
 							}
 
 							if (itemChanged) {
-								writeLog('drag and drop: 6');
 								$scope.initTasks();
 								$scope.applyFilters();
 
@@ -364,7 +357,8 @@ tbApp.controller('taskboardController', function($scope, $filter, $http) {
 			});
 
 			// then apply the current filters for search and sensitivity
-			writeLog('test');
+			
+			writeLog("$scope.filter.owner = " + $scope.filter.owner);
 			$scope.applyFilters();
 
 			// clean up Completed Tasks
@@ -521,6 +515,8 @@ tbApp.controller('taskboardController', function($scope, $filter, $http) {
 					});
 				}
 			}
+			$scope.applyFilters();
+
 		} catch (error) {
 			writeLog('initTasks: ' + error);
 		}
@@ -547,28 +543,23 @@ tbApp.controller('taskboardController', function($scope, $filter, $http) {
 	$scope.applyFilters = function() {
 		try {
 			if ($scope.filter.search.length > 0) {
-				writeLog("applyFilers 1");
 				$scope.taskFolders.forEach(function(taskFolder) {
 					taskFolder.filteredTasks = $filter('filter')(taskFolder.tasks, $scope.filter.search);
 				});
 			} else {
-				writeLog("applyFilers 2");
 				$scope.taskFolders.forEach(function(taskFolder) {
 					taskFolder.filteredTasks = taskFolder.tasks;
 				});
 			}
 
 			if ($scope.filter.category != '<All Categories>') {
-				writeLog("applyFilers 3");
 				if ($scope.filter.category == '<No Category>') {
-					writeLog("applyFilers 4");
 					$scope.taskFolders.forEach(function(taskFolder) {
 						taskFolder.filteredTasks = $filter('filter')(taskFolder.filteredTasks, function(task) {
 							return task.categories == '';
 						});
 					});
 				} else {
-					writeLog("applyFilers 5");
 					$scope.taskFolders.forEach(function(taskFolder) {
 						taskFolder.filteredTasks = $filter('filter')(taskFolder.filteredTasks, function(task) {
 							if (task.categories == '') {
@@ -590,14 +581,12 @@ tbApp.controller('taskboardController', function($scope, $filter, $http) {
 			if ($scope.filter.owner != '<All Owners>') {
 				writeLog("applyFilers 6 - " + $scope.filter.owner);
 				if ($scope.filter.owner == '<No Owner>') {
-					writeLog("applyFilers 7");
 					$scope.taskFolders.forEach(function(taskFolder) {
 						taskFolder.filteredTasks = $filter('filter')(taskFolder.filteredTasks, function(task) {
 							return task.owner == '';
 						});
 					});
 				} else {
-					writeLog("applyFilers 8");
 					$scope.taskFolders.forEach(function(taskFolder) {
 						taskFolder.filteredTasks = $filter('filter')(taskFolder.filteredTasks, function(task) {
 							return task.owner == $scope.filter.owner;
